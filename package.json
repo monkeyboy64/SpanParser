@@ -1,0 +1,19 @@
+{
+  "name": "load_tester",
+  "version": "1.0.0",
+  "main": "app.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha ./Parse.spec.js --timeout 50000",
+    "prettier": "prettier --config --write ./.prettier.rc ./**/*.js" 
+  },
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "xmldom": "^0.1.27"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "prettier": "1.17.1"
+  }
+}
