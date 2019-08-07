@@ -269,7 +269,7 @@ describe('parseSpans', () => {
     expect(output).to.equal(
       '<p><span style="ot:locl,0;ot:ss04,1;">W</span><span style="ot:liga;ot:locl,0;">illiam </span><span style="ot:locl,0;ot:ss04,1;">A</span><span style="ot:liga;ot:locl,0;">dkins</span></p>',
     );
-  })
+  });
 
   it('words start with numbers', () => {
     const words = getWords('310 South');
