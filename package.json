@@ -1,5 +1,5 @@
 {
-  "name": "load_tester",
+  "name": "spanparser",
   "version": "1.0.0",
   "main": "app.js",
   "license": "MIT",
