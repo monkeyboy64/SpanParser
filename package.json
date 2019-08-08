@@ -1,16 +1,16 @@
 {
   "name": "spanparser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "Parse.js",
   "license": "MIT",
   "homepage": "https://github.com/cavemandev/SpanParser",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/cavemandev/SpanParser.git"
+    "type": "git",
+    "url": "https://github.com/cavemandev/SpanParser.git"
   },
   "scripts": {
     "test": "mocha ./Parse.spec.js --timeout 50000",
-    "prettier": "prettier --config --write ./.prettier.rc ./**/*.js" 
+    "prettier": "prettier --config --write ./.prettier.rc ./**/*.js"
   },
   "dependencies": {
     "lodash": "^4.17.15",

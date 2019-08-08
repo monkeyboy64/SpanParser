@@ -1,5 +1,5 @@
 const chai = require('chai');
-const { parseSpans, applySpans, getWords } = require('./Parse');
+const { parseSpans, applySpans, getWords, SpanSchema } = require('./Parse');
 
 const { expect } = chai;
 
@@ -289,5 +289,25 @@ describe('parseSpans', () => {
   it('words with numbers', () => {
     const words = getWords('One 2 Three 400 Five');
     expect(words.length).to.equal(5);
+  });
+
+  it('null schema', () => {
+    expect('This is Here', applySpans(null, 'This is Here'));
+  });
+
+  it('schema with empty spans', () => {
+    const schema = parseSpans('this is text');
+    expect(schema.spans.length).to.equal(0);
+  });
+
+  it('input with no spans', () => {
+    const input = 'this is text';
+    const schema = parseSpans(input);
+    expect(applySpans(schema, input)).to.equal(input);
+  });
+
+  it('schema with empty spans with empty text', () => {
+    const schema = parseSpans('');
+    expect(schema.spans.length).to.equal(0);
   });
 });
