@@ -11,12 +11,13 @@ function SpanSchema(spans, ligas) {
   this.ligas = ligas;
 }
 
-SpanSchema.prototype.toString = function() {
+SpanSchema.prototype.toString = function () {
   const spanElements = this.spans.map(toSpanElement);
   return `<p>${spanElements.join('')}</p>`;
 };
 
 function parseSpans(text) {
+  text = text ? text : `<p>${text}</p>`;
   const p = new DOMParser(text).parseFromString(text, 'text/html').getElementsByTagName('p')[0];
   const ligas = {};
   const outSpans = [];
@@ -95,6 +96,9 @@ const EMPTY_SPAN = {
 };
 
 function applySpans(schema, text) {
+  if (!schema || !schema.spans.length) {
+    return text;
+  }
   const spanCount = schema.spans.length;
 
   const newSpans = [];
