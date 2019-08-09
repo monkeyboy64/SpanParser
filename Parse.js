@@ -11,23 +11,54 @@ function SpanSchema(spans, ligas) {
   this.ligas = ligas;
 }
 
-SpanSchema.prototype.toString = function () {
+SpanSchema.prototype.toString = function() {
   const spanElements = this.spans.map(toSpanElement);
   return `<p>${spanElements.join('')}</p>`;
 };
 
-function parseSpans(text) {
-  text = text ? text : `<p>${text}</p>`;
-  const p = new DOMParser(text).parseFromString(text, 'text/html').getElementsByTagName('p')[0];
+function ParagraphSchema(spanSchema) {
+  this.spanSchema = spanSchema;
+}
+
+ParagraphSchema.prototype.toString = function() {
+  return this.spanSchema.toString();
+};
+
+function ParagraphsSchema(paragraphSchemas = []) {
+  this.paragraphs = paragraphSchemas;
+}
+
+ParagraphsSchema.prototype.toString = function() {
+  return this.paragraphs.map(p => p.toString()).join('');
+};
+
+function parseSpans(originalText) {
+  if (!originalText) {
+    return new ParagraphsSchema();
+  }
+
+  const text = originalText || `<p>${originalText}</p>`;
+  const ps = new DOMParser(text).parseFromString(text, 'text/html').getElementsByTagName('p');
+  const outParagraphs = [];
+
+  for (let i = 0; i < ps.length; i += 1) {
+    const paragraph = ps[i];
+    outParagraphs.push(parseParagraph(paragraph));
+  }
+
+  return new ParagraphsSchema(outParagraphs);
+}
+
+function parseParagraph(paragraph) {
   const ligas = {};
   const outSpans = [];
 
-  if (p) {
+  if (paragraph) {
     let finish = false;
     let content = '';
     let sc = '';
-    for (let i = 0; i < p.childNodes.length; ++i) {
-      const span = p.childNodes[i];
+    for (let i = 0; i < paragraph.childNodes.length; ++i) {
+      const span = paragraph.childNodes[i];
       const styleElement = span.attributes.getNamedItem('style');
       let styleContent = '';
       if (styleElement) {
@@ -66,7 +97,7 @@ function parseSpans(text) {
       content = `${content}${span.textContent}`;
       sc = styleContent;
 
-      if (finish || i === p.childNodes.length - 1) {
+      if (finish || i === paragraph.childNodes.length - 1) {
         outSpans.push({
           content,
           length: content.length,
@@ -78,12 +109,7 @@ function parseSpans(text) {
     }
   }
 
-  const toString = () => {
-    const spanElements = outSpans.map(toSpanElement);
-    return `<p>${spanElements.join('')}</p>`;
-  };
-
-  return new SpanSchema(outSpans, ligas);
+  return new ParagraphSchema(new SpanSchema(outSpans, ligas));
 }
 
 function getWords(text) {
@@ -95,11 +121,11 @@ const EMPTY_SPAN = {
   style: '',
 };
 
-function applySpans(schema, text) {
-  if (!schema || !schema.spans.length) {
+function applyParagraph(spanSchema, text) {
+  if (!spanSchema || !spanSchema.spans.length) {
     return text;
   }
-  const spanCount = schema.spans.length;
+  const spanCount = spanSchema.spans.length;
 
   const newSpans = [];
 
@@ -109,21 +135,21 @@ function applySpans(schema, text) {
 
     // If we have 3 words, where the middle word is 1 character
     if (wordCount === 3 && words[1].length === 1) {
-      newSpans.push(...fillThreeSpans(schema.spans.slice(0, 3), words[0]));
+      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(0, 3), words[0]));
       newSpans.push({
         content: ` ${words[1]} `,
-        style: schema.spans[3].style,
+        style: spanSchema.spans[3].style,
       });
-      newSpans.push(...fillThreeSpans(schema.spans.slice(4), words[2]));
+      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(4), words[2]));
     } else if (wordCount === 2) {
-      newSpans.push(...fillThreeSpans(schema.spans.slice(0, 3), words[0]));
+      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(0, 3), words[0]));
       newSpans.push({
         content: ' ',
-        style: schema.spans[3].style,
+        style: spanSchema.spans[3].style,
       });
-      newSpans.push(...fillThreeSpans(schema.spans.slice(4), words[1]));
+      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(4), words[1]));
     } else if (wordCount === 1) {
-      newSpans.push(...fillThreeSpans(schema.spans.slice(0, 3), words[0]));
+      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(0, 3), words[0]));
       newSpans.push({ ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN });
     } else {
       newSpans.push({
@@ -138,21 +164,21 @@ function applySpans(schema, text) {
 
     //handle 3 words with middle initial
     if (wordCount === 3 && words[1].length === 1) {
-      newSpans.push(...fillTwoSpans(schema.spans.slice(0, 2), false, words[0]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, words[0]));
       newSpans.push({
         content: ` ${words[1]} `,
-        style: schema.spans[2].style,
+        style: spanSchema.spans[2].style,
       });
-      newSpans.push(...fillTwoSpans(schema.spans.slice(3), true, words[2]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(3), true, words[2]));
     } else if (wordCount === 2) {
-      newSpans.push(...fillTwoSpans(schema.spans.slice(0, 2), false, words[0]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, words[0]));
       newSpans.push({
         content: ' ',
         style: '',
       });
-      newSpans.push(...fillTwoSpans(schema.spans.slice(3), true, words[1]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(3), true, words[1]));
     } else if (wordCount === 1) {
-      newSpans.push(...fillTwoSpans(schema.spans.slice(0, 2), false, words[0]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, words[0]));
       newSpans.push({ ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN });
     } else {
       newSpans.push({
@@ -166,26 +192,26 @@ function applySpans(schema, text) {
     const wordCount = words.length;
 
     if (wordCount === 2) {
-      newSpans.push(...fillTwoSpans(schema.spans.slice(0, 2), false, words[0]));
-      newSpans.push(...fillTwoSpans(schema.spans.slice(2), schema.spans[2].length !== 1, words[1]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, words[0]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(2), spanSchema.spans[2].length !== 1, words[1]));
     } else if (wordCount === 1) {
-      newSpans.push(...fillTwoSpans(schema.spans.slice(0, 2), false, words[0]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, words[0]));
       newSpans.push({ ...EMPTY_SPAN }, { ...EMPTY_SPAN });
     } else {
       newSpans.push(
-        ...schema.spans.map((span, index) => {
+        ...spanSchema.spans.map((span, index) => {
           return index === 0 ? { content: text, style: span.style } : { ...EMPTY_SPAN };
         }),
       );
     }
   } else if (spanCount === 3) {
-    newSpans.push(...fillThreeSpans(schema.spans, text));
+    newSpans.push(...fillThreeSpans(spanSchema.spans, text));
   } else if (spanCount === 2) {
-    const invert = schema.spans[0].length > 1;
-    newSpans.push(...fillTwoSpans(schema.spans, invert, text));
+    const invert = spanSchema.spans[0].length > 1;
+    newSpans.push(...fillTwoSpans(spanSchema.spans, invert, text));
   } else {
     newSpans.push(
-      ...schema.spans.map((span, index) => {
+      ...spanSchema.spans.map((span, index) => {
         return index === 0 ? { content: text, style: span.style } : { ...EMPTY_SPAN };
       }),
     );
@@ -198,6 +224,37 @@ function applySpans(schema, text) {
   const spanElements = newSpansWithLigatures.map(toSpanElement);
 
   return `<p>${spanElements.join('')}</p>`;
+}
+
+function applySpans(paragraphsSchema, text) {
+  if (!paragraphsSchema || !paragraphsSchema.paragraphs.length) {
+    return text;
+  }
+
+  const nodes = new DOMParser().parseFromString(text, 'text/html');
+  let textParagraphs = [];
+  // See if we just have plain text
+  if (nodes.childNodes.length === 1 && nodes.childNodes[0].nodeType === 3) {
+    textParagraphs = text.split('\n');
+  } else {
+    const paragraphs = nodes.getElementsByTagName('p');
+    for (let i = 0; i < paragraphs.length; i += 1) {
+      const paragraph = paragraphs[i];
+      const spans = paragraph.getElementsByTagName('span');
+      let paragraphText = '';
+      for (let j = 0; j < spans.length; j += 1) {
+        const span = spans[j];
+        paragraphText = `${paragraphText}${span.textContent}`;
+      }
+      textParagraphs.push(paragraphText);
+    }
+  }
+
+  const outText = paragraphsSchema.paragraphs.map((paragraph, index) => {
+    return applyParagraph(paragraph.spanSchema, textParagraphs[index] || '');
+  });
+
+  return outText.join('');
 }
 
 function fillTwoSpans(spans, invert, text) {
