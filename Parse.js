@@ -123,7 +123,7 @@ const EMPTY_SPAN = {
 
 function applyParagraph(spanSchema, text) {
   if (!spanSchema || !spanSchema.spans.length) {
-    return text;
+    return `<p>${text}</p>`;
   }
   const spanCount = spanSchema.spans.length;
 
@@ -251,6 +251,8 @@ function applySpans(paragraphsSchema, text) {
   }
 
   const outText = paragraphsSchema.paragraphs.map((paragraph, index) => {
+    const spanSchema = paragraph.spanSchema;
+    const text = textParagraphs[index] || '';
     return applyParagraph(paragraph.spanSchema, textParagraphs[index] || '');
   });
 
