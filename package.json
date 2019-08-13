@@ -1,7 +1,7 @@
 {
   "name": "spanparser",
   "version": "1.0.2",
-  "main": "Parse.js",
+  "main": "lib/Parse.js",
   "license": "MIT",
   "homepage": "https://github.com/cavemandev/SpanParser",
   "repository": {
@@ -9,14 +9,17 @@
     "url": "https://github.com/cavemandev/SpanParser.git"
   },
   "scripts": {
-    "test": "mocha ./Parse.spec.js --timeout 50000",
-    "prettier": "prettier --config --write ./.prettier.rc ./**/*.js"
+    "test": "mocha ./src/Parse.spec.js --timeout 50000",
+    "prettier": "prettier --config --write ./.prettier.rc src/**/*.js",
+    "build": "babel src -d lib"
   },
   "dependencies": {
     "lodash": "^4.17.15",
     "xmldom": "^0.1.27"
   },
   "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
     "prettier": "1.17.1"
