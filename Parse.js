@@ -16,20 +16,46 @@ SpanSchema.prototype.toString = function() {
   return `<p>${spanElements.join('')}</p>`;
 };
 
+SpanSchema.prototype.toPlainText = function() {
+  const spanElements = this.spans.map(span => span.content);
+  return spanElements.join('');
+};
+
 function ParagraphSchema(spanSchema) {
   this.spanSchema = spanSchema;
 }
 
 ParagraphSchema.prototype.toString = function() {
-  return this.spanSchema.toString();
+  if (this.spanSchema) {
+    return this.spanSchema.toString();
+  }
 };
 
-function ParagraphsSchema(paragraphSchemas = []) {
+ParagraphSchema.prototype.toPlainText = function() {
+  if (this.spanSchema) {
+    return this.spanSchema.toPlainText();
+  }
+};
+
+function ParagraphsSchema(paragraphSchemas = [], originalText) {
   this.paragraphs = paragraphSchemas;
+  this.originalText = originalText;
 }
 
 ParagraphsSchema.prototype.toString = function() {
+  if (!this.paragraphs.length) {
+    return this.originalText;
+  }
+
   return this.paragraphs.map(p => p.toString()).join('');
+};
+
+ParagraphsSchema.prototype.toPlainText = function() {
+  if (!this.paragraphs.length) {
+    return this.originalText;
+  }
+
+  return this.paragraphs.map(p => p.toPlainText()).join('\n');
 };
 
 function parseSpans(originalText) {
@@ -38,8 +64,16 @@ function parseSpans(originalText) {
   }
 
   const text = originalText || `<p>${originalText}</p>`;
-  const ps = new DOMParser(text).parseFromString(text, 'text/html').getElementsByTagName('p');
+  const doc = new DOMParser().parseFromString(text, 'text/html');
+  const ps = doc.getElementsByTagName('p');
   const outParagraphs = [];
+
+  if (!ps.length) {
+    // Check to see if there is a text node on the
+    if (doc.childNodes.length === 1 && doc.childNodes[0].nodeType === 3) {
+      return new ParagraphsSchema([], originalText);
+    }
+  }
 
   for (let i = 0; i < ps.length; i += 1) {
     const paragraph = ps[i];
