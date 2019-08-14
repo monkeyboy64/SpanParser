@@ -295,6 +295,32 @@ describe('parseSpans', () => {
     expect('This is Here', applySpans(null, 'This is Here'));
   });
 
+  it('null schema, null text', () => {
+    expect('', applySpans(null, ''));
+  });
+
+  it('schema, empty text', () => {
+    const spans = [
+      '<span style="color:cmyk(0,0,0,255,255);font-ize:33pt;font-name:burguesscript;ot:liga;ot:locl,0;" data-full-color="device-cmyk(0,0,0,255,1,rgb(0,0,0))">dkins</span>',
+    ];
+
+    const input = `<p>${spans.join('')}</p>`;
+    const schema = parseSpans(input);
+    const output = applySpans(schema, '');
+    expect(output).to.equal('<p></p>');
+  });
+
+  it('schema, null text', () => {
+    const spans = [
+      '<span style="color:cmyk(0,0,0,255,255);font-ize:33pt;font-name:burguesscript;ot:liga;ot:locl,0;" data-full-color="device-cmyk(0,0,0,255,1,rgb(0,0,0))">dkins</span>',
+    ];
+
+    const input = `<p>${spans.join('')}</p>`;
+    const schema = parseSpans(input);
+    const output = applySpans(schema, null);
+    expect(output).to.equal('<p></p>');
+  });
+
   it('schema with empty spans', () => {
     const text = 'this is text';
     const schema = parseSpans(text);
@@ -333,9 +359,7 @@ describe('parseSpans', () => {
 
     const input = 'hello world';
     const output = applySpans(schema, input);
-    expect(output).to.equal(
-      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;"></span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;"></span></p>',
-    );
+    expect(output).to.equal('<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p>');
   });
 
   it('can handle multiple paragraphs with one paragraph on input as html', () => {
@@ -346,9 +370,7 @@ describe('parseSpans', () => {
 
     const input = '<p><span>hello world</span></p>';
     const output = applySpans(schema, input);
-    expect(output).to.equal(
-      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;"></span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;"></span></p>',
-    );
+    expect(output).to.equal('<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p>');
   });
 
   it('can handle multiple paragraphs with two paragraphs on input as plain string', () => {
@@ -360,7 +382,7 @@ describe('parseSpans', () => {
     const input = 'hello world\ntis nice';
     const output = applySpans(schema, input);
     expect(output).to.equal(
-      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis nice</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;"></span></p>',
+      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis nice</span></p>',
     );
   });
 
@@ -373,7 +395,7 @@ describe('parseSpans', () => {
     const input = '<p><span>hello world</span></p><p><span>tis nice</span></p>';
     const output = applySpans(schema, input);
     expect(output).to.equal(
-      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis nice</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;"></span></p>',
+      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis nice</span></p>',
     );
   });
 
@@ -544,6 +566,83 @@ describe('parseSpans', () => {
     const schema = parseSpans(ps.join(''));
     const output = schema.toPlainText();
     expect(output).to.equal(expectedOutput.join('\n'));
+  });
+
+  it('handle different paragraph scheme on input', () => {
+    const ps = [
+      '<p><span style="ot:locl,0;">MARRIAGE OFFICIANT: REVEREND JOHN DILLAN</span></p>',
+      '<p><span style="ot:locl,0;">PRELUDE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE GROOM &amp; GROOMSMEN</span></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE PARENTS</span></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE MAID OF HONOR</span></p>',
+      '<p><span style="ot:locl,0;">RING BEARER &amp; FLOWER GIRL</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">&amp; FATHER OF THE BRIDE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">CEREMONY</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">READING BY THE SISTER OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">READING BY THE GROOM’S UNCLE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">GIVING OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">EXCHANGING OF VOWS</span></p>',
+      '<p><span style="ot:locl,0;">EXCHANGING OF RINGS</span></p>',
+      '<p><span style="ot:locl,0;">PRONOUNCEMENT</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">MUSIC AND PROCESSION</span></p>',
+      '<p><span style="ot:locl,0;">SIGNING OF THE REGISTRY</span></p>',
+    ];
+
+    const input = [
+      '',
+      'MARRIAGE OFFICIANT: REVEREND JOHN DILLAN',
+      '',
+      'PRELUDE',
+      '',
+      '',
+      'ENTRANCE OF THE GROOM &amp; GROOMSMEN',
+      'ENTRANCE OF THE PARENTS',
+      '',
+      'ENTRANCE OF THE MAID OF HONOR',
+      'RING BEARER &amp; FLOWER GIRL',
+      '',
+      'ENTRANCE OF THE BRIDE',
+      '&amp; FATHER OF THE BRIDE',
+      '',
+      'CEREMONY',
+      '',
+      'READING BY THE SISTER OF THE BRIDE',
+      'READING BY THE GROOM’S UNCLE',
+      '',
+    ];
+
+    const expectedOutput = [
+      '<p></p>',
+      '<p><span style="ot:locl,0;">MARRIAGE OFFICIANT: REVEREND JOHN DILLAN</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">PRELUDE</span></p>',
+      '<p></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE GROOM &amp; GROOMSMEN</span></p>',
+      '<p><span style="ot:liga;ot:locl,0;">ENTRANCE OF THE PARENTS</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE MAID OF HONOR</span></p>',
+      '<p><span style="ot:liga;ot:locl,0;">RING BEARER &amp; FLOWER GIRL</span></p>',
+      '<p></p>',
+      '<p><span style="ot:liga;ot:locl,0;">ENTRANCE OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">&amp; FATHER OF THE BRIDE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:liga;ot:locl,0;">CEREMONY</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">READING BY THE SISTER OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">READING BY THE GROOM’S UNCLE</span></p>',
+    ];
+
+    const schema = parseSpans(ps.join(''));
+    const output = applySpans(schema, input.join('\n'));
+    expect(output).to.equal(expectedOutput.join(''));
   });
 
   it('schema with empty spans', () => {
