@@ -287,8 +287,16 @@ function applySpans(paragraphsSchema, text) {
   const outText = paragraphsSchema.paragraphs.map((paragraph, index) => {
     const spanSchema = paragraph.spanSchema;
     const text = textParagraphs[index] || '';
-    return applyParagraph(paragraph.spanSchema, textParagraphs[index] || '');
+    return applyParagraph(spanSchema, text);
   });
+
+  // See if we have more text paragraphs
+  if (paragraphsSchema.paragraphs.length < textParagraphs.length) {
+    const moreOutText = textParagraphs.slice(paragraphsSchema.length).map(textParagraph => {
+      return `<p><span style="ot:liga;ot:locl,0;">${textParagraph}</span></p>`;
+    });
+    outText.push(...moreOutText);
+  }
 
   return outText.join('');
 }
