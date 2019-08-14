@@ -412,7 +412,7 @@ describe('parseSpans', () => {
     const input = 'hello world\ntis nice\nAll is well\njump on the trampoline';
     const output = applySpans(schema, input);
     expect(output).to.equal(
-      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis nice</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">All is well</span></p><p><span style="ot:liga;ot:locl,0;">hello world</span></p><p><span style="ot:liga;ot:locl,0;">tis nice</span></p><p><span style="ot:liga;ot:locl,0;">All is well</span></p><p><span style="ot:liga;ot:locl,0;">jump on the trampoline</span></p>',
+      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis nice</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">All is well</span></p><p><span style="ot:liga;ot:locl,0;">jump on the trampoline</span></p>',
     );
   });
 
@@ -426,7 +426,7 @@ describe('parseSpans', () => {
       '<p><span>hello world</span></p><p><span>tis nice</span></p><p><span>All is well</span></p><p><span>jump on the trampoline</span></p>';
     const output = applySpans(schema, input);
     expect(output).to.equal(
-      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis nice</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">All is well</span></p><p><span style="ot:liga;ot:locl,0;">hello world</span></p><p><span style="ot:liga;ot:locl,0;">tis nice</span></p><p><span style="ot:liga;ot:locl,0;">All is well</span></p><p><span style="ot:liga;ot:locl,0;">jump on the trampoline</span></p>',
+      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis nice</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">All is well</span></p><p><span style="ot:liga;ot:locl,0;">jump on the trampoline</span></p>',
     );
   });
 
