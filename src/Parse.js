@@ -29,12 +29,16 @@ ParagraphSchema.prototype.toString = function() {
   if (this.spanSchema) {
     return this.spanSchema.toString();
   }
+
+  return '';
 };
 
 ParagraphSchema.prototype.toPlainText = function() {
   if (this.spanSchema) {
     return this.spanSchema.toPlainText();
   }
+
+  return '';
 };
 
 function ParagraphsSchema(paragraphSchemas = [], originalText) {
@@ -95,7 +99,7 @@ function parseParagraph(paragraph) {
     let finish = false;
     let content = '';
     let sc = '';
-    for (let i = 0; i < paragraph.childNodes.length; ++i) {
+    for (let i = 0; i < paragraph.childNodes.length; i += 1) {
       const span = paragraph.childNodes[i];
       const styleElement = span.attributes.getNamedItem('style');
       let styleContent = '';
@@ -172,26 +176,26 @@ function applyParagraph(spanSchema, text) {
   const newSpans = [];
 
   if (spanCount === 7) {
-    const words = getWords(text);
-    const wordCount = words.length;
+    const allWords = getWords(text);
+    const wordCount = allWords.length;
 
     // If we have 3 words, where the middle word is 1 character
-    if (wordCount === 3 && words[1].length === 1) {
-      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(0, 3), words[0]));
+    if (wordCount === 3 && allWords[1].length === 1) {
+      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(0, 3), allWords[0]));
       newSpans.push({
-        content: ` ${words[1]} `,
+        content: ` ${allWords[1]} `,
         style: spanSchema.spans[3].style,
       });
-      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(4), words[2]));
+      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(4), allWords[2]));
     } else if (wordCount === 2) {
-      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(0, 3), words[0]));
+      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(0, 3), allWords[0]));
       newSpans.push({
         content: ' ',
         style: spanSchema.spans[3].style,
       });
-      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(4), words[1]));
+      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(4), allWords[1]));
     } else if (wordCount === 1) {
-      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(0, 3), words[0]));
+      newSpans.push(...fillThreeSpans(spanSchema.spans.slice(0, 3), allWords[0]));
       newSpans.push({ ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN });
     } else {
       newSpans.push({
@@ -201,26 +205,26 @@ function applyParagraph(spanSchema, text) {
       newSpans.push({ ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN });
     }
   } else if (spanCount === 5) {
-    const words = getWords(text);
-    const wordCount = words.length;
+    const allWords = getWords(text);
+    const wordCount = allWords.length;
 
-    //handle 3 words with middle initial
-    if (wordCount === 3 && words[1].length === 1) {
-      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, words[0]));
+    // handle 3 words with middle initial
+    if (wordCount === 3 && allWords[1].length === 1) {
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, allWords[0]));
       newSpans.push({
-        content: ` ${words[1]} `,
+        content: ` ${allWords[1]} `,
         style: spanSchema.spans[2].style,
       });
-      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(3), true, words[2]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(3), true, allWords[2]));
     } else if (wordCount === 2) {
-      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, words[0]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, allWords[0]));
       newSpans.push({
         content: ' ',
         style: '',
       });
-      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(3), true, words[1]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(3), true, allWords[1]));
     } else if (wordCount === 1) {
-      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, words[0]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, allWords[0]));
       newSpans.push({ ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN });
     } else {
       newSpans.push({
@@ -230,14 +234,14 @@ function applyParagraph(spanSchema, text) {
       newSpans.push({ ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN }, { ...EMPTY_SPAN });
     }
   } else if (spanCount === 4) {
-    const words = getWords(text);
-    const wordCount = words.length;
+    const allWords = getWords(text);
+    const wordCount = allWords.length;
 
     if (wordCount === 2) {
-      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, words[0]));
-      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(2), spanSchema.spans[2].length !== 1, words[1]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, allWords[0]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(2), spanSchema.spans[2].length !== 1, allWords[1]));
     } else if (wordCount === 1) {
-      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, words[0]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, allWords[0]));
       newSpans.push({ ...EMPTY_SPAN }, { ...EMPTY_SPAN });
     } else {
       newSpans.push(
@@ -261,7 +265,7 @@ function applyParagraph(spanSchema, text) {
 
   const filteredSpans = newSpans.filter(s => s);
 
-  const newSpansWithLigatures = [...filteredSpans]; //applyLigatures(newSpans, schema.ligas);
+  const newSpansWithLigatures = [...filteredSpans]; // applyLigatures(newSpans, schema.ligas);
 
   const spanElements = newSpansWithLigatures.map(toSpanElement);
 
@@ -301,7 +305,7 @@ function applySpans(paragraphsSchema, text) {
     }
 
     let outText = paragraphsSchema.paragraphs.map((paragraph, index) => {
-      const spanSchema = paragraph.spanSchema;
+      const { spanSchema } = paragraph;
       const text = textParagraphs[index] || '';
       return applyParagraph(spanSchema, text);
     });
