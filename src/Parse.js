@@ -1,4 +1,5 @@
 const { DOMParser } = require('xmldom');
+const escape = require('lodash/fp/escape');
 const words = require('lodash/fp/words').convert({ cap: false });
 
 const OT = 'ot';
@@ -306,8 +307,8 @@ function applySpans(paragraphsSchema, text) {
 
     let outText = paragraphsSchema.paragraphs.map((paragraph, index) => {
       const { spanSchema } = paragraph;
-      const text = textParagraphs[index] || '';
-      return applyParagraph(spanSchema, text);
+      const pText = escape(textParagraphs[index] || '');
+      return applyParagraph(spanSchema, pText);
     });
 
     // See if we have more text paragraphs
