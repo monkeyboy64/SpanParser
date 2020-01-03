@@ -83,7 +83,7 @@ describe('parseSpans', () => {
     const text = 'William Macy';
     const output = applySpans(schema, text);
     expect(output).to.equal(
-      '<p><span style="ot:aalt;">W</span><span style="">illiam</span><span style="ot:aalt;">M</span><span style="">acy</span></p>',
+      '<p><span style="ot:aalt;">W</span><span style="">illiam </span><span style="ot:aalt;">M</span><span style="">acy</span></p>',
     );
   });
 
@@ -238,7 +238,7 @@ describe('parseSpans', () => {
     expect(output).to.equal('<p><span style="ot:liga,1;ot:locl,0;">Willia</span><span style="ot:aalt,4;ot:locl,0;">m</span></p>');
   });
 
-  it('real world', () => {
+  it('real world Barret Bob', () => {
     const spans = [
       '<span style="ot:locl,0;ot:ss04,1;">W</span>',
       '<span style="color:cmyk(0,0,0,255,255);font-size:33pt;font-name:burguesscript;ot:liga;ot:locl,0;" data-full-color="device-cmyk(0,0,0,255,1,rgb(0,0,0))">illiam </span>',
@@ -251,7 +251,7 @@ describe('parseSpans', () => {
     const text = 'Barret Bob';
     const output = applySpans(schema, text);
     expect(output).to.equal(
-      '<p><span style="ot:locl,0;ot:ss04,1;">B</span><span style="ot:liga;ot:locl,0;">arret</span><span style="ot:locl,0;ot:ss04,1;">B</span><span style="ot:liga;ot:locl,0;">ob</span></p>',
+      '<p><span style="ot:locl,0;ot:ss04,1;">B</span><span style="ot:liga;ot:locl,0;">arret </span><span style="ot:locl,0;ot:ss04,1;">B</span><span style="ot:liga;ot:locl,0;">ob</span></p>',
     );
   });
 
@@ -655,5 +655,28 @@ describe('parseSpans', () => {
     const text = 'this is text \nhi there';
     const schema = parseSpans(text);
     expect(schema.toPlainText()).to.equal(text);
+  });
+
+  it('real world Taylor Frazier', () => {
+    const text = [
+      '<p>',
+      '<span style="ot:locl,0;ot:ss04,1;">T</span>',
+      '<span style="color:cmyk(41,69,163,0,255);font-size:33pt;font-name:burguesscript;ot:liga;ot:locl,0;" data-full-color="device-cmyk(41,69,163,0,1,rgb(216,181,115))">aylor </span>',
+      '<span style="ot:locl,0;ot:ss04,1;">F</span>',
+      '<span style="color:cmyk(41,69,163,0,255);font-size:33pt;font-name:burguesscript;ot:liga;ot:locl,0;" data-full-color="device-cmyk(41,69,163,0,1,rgb(216,181,115))">razier</span>',
+      '</p>',
+    ];
+    const expectedOutput = [
+      '<p>',
+      '<span style="ot:locl,0;ot:ss04,1;">T</span>',
+      '<span style="ot:liga;ot:locl,0;">aylor </span>',
+      '<span style="ot:locl,0;ot:ss04,1;">F</span>',
+      '<span style="ot:liga;ot:locl,0;">razier</span>',
+      '</p>',
+    ];
+    const schema = parseSpans(text.join(''));
+
+    const output = applySpans(schema, 'Taylor Frazier');
+    expect(output).to.equal(expectedOutput.join(''));
   });
 });

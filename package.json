@@ -1,6 +1,6 @@
 {
   "name": "spanparser",
-  "version": "1.0.2",
+  "version": "1.0.10",
   "main": "lib/Parse.js",
   "license": "MIT",
   "homepage": "https://github.com/cavemandev/SpanParser",

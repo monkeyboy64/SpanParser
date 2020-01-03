@@ -239,7 +239,7 @@ function applyParagraph(spanSchema, text) {
     const wordCount = allWords.length;
 
     if (wordCount === 2) {
-      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, allWords[0]));
+      newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, `${allWords[0]} `));
       newSpans.push(...fillTwoSpans(spanSchema.spans.slice(2), spanSchema.spans[2].length !== 1, allWords[1]));
     } else if (wordCount === 1) {
       newSpans.push(...fillTwoSpans(spanSchema.spans.slice(0, 2), false, allWords[0]));
