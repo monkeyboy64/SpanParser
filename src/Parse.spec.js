@@ -351,7 +351,7 @@ describe('parseSpans', () => {
     expect(schema.paragraphs.length).to.equal(1);
   });
 
-  it('can handle multiple paragraphs with one paragraph on input as plain string', () => {
+  it('can handle three paragraphs with one paragraph on input as plain string', () => {
     const text =
       '<p><span style="color:cmyk(41,69,163,0,255);font-size:33pt;ot:calt,0;ot:liga,1;ot:locl,0;" >MR. AND MRS. JOHN PAUL FRAZIER</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >request the honor of your presence at</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >THE WEDDING OF THEIR DAUGHTER</span></p>';
     const schema = parseSpans(text);
@@ -362,7 +362,7 @@ describe('parseSpans', () => {
     expect(output).to.equal('<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p>');
   });
 
-  it('can handle multiple paragraphs with one paragraph on input as html', () => {
+  it('can handle three paragraphs with one paragraph on input as html', () => {
     const text =
       '<p><span style="color:cmyk(41,69,163,0,255);font-size:33pt;ot:calt,0;ot:liga,1;ot:locl,0;" >MR. AND MRS. JOHN PAUL FRAZIER</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >request the honor of your presence at</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >THE WEDDING OF THEIR DAUGHTER</span></p>';
     const schema = parseSpans(text);
@@ -373,7 +373,7 @@ describe('parseSpans', () => {
     expect(output).to.equal('<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p>');
   });
 
-  it('can handle multiple paragraphs with two paragraphs on input as plain string', () => {
+  it('can handle three paragraphs with two paragraphs on input as plain string', () => {
     const text =
       '<p><span style="color:cmyk(41,69,163,0,255);font-size:33pt;ot:calt,0;ot:liga,1;ot:locl,0;" >MR. AND MRS. JOHN PAUL FRAZIER</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >request the honor of your presence at</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >THE WEDDING OF THEIR DAUGHTER</span></p>';
     const schema = parseSpans(text);
@@ -386,7 +386,7 @@ describe('parseSpans', () => {
     );
   });
 
-  it('can handle multiple paragraphs with two paragraphs on input as html', () => {
+  it('can handle three paragraphs with two paragraphs on input as html', () => {
     const text =
       '<p><span style="color:cmyk(41,69,163,0,255);font-size:33pt;ot:calt,0;ot:liga,1;ot:locl,0;" >MR. AND MRS. JOHN PAUL FRAZIER</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >request the honor of your presence at</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >THE WEDDING OF THEIR DAUGHTER</span></p>';
     const schema = parseSpans(text);
@@ -399,7 +399,7 @@ describe('parseSpans', () => {
     );
   });
 
-  it('can handle multiple paragraphs with three paragraphs on input as plain string', () => {
+  it('can handle three paragraphs with three paragraphs on input as plain string', () => {
     const text =
       '<p><span style="color:cmyk(41,69,163,0,255);font-size:33pt;ot:calt,0;ot:liga,1;ot:locl,0;" >MR. AND MRS. JOHN PAUL FRAZIER</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >request the honor of your presence at</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >THE WEDDING OF THEIR DAUGHTER</span></p>';
     const schema = parseSpans(text);
@@ -412,7 +412,7 @@ describe('parseSpans', () => {
     );
   });
 
-  it('can handle multiple paragraphs with three paragraphs on input as html', () => {
+  it('can handle three paragraphs with three paragraphs on input as html', () => {
     const text =
       '<p><span style="color:cmyk(41,69,163,0,255);font-size:33pt;ot:calt,0;ot:liga,1;ot:locl,0;" >MR. AND MRS. JOHN PAUL FRAZIER</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >request the honor of your presence at</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >THE WEDDING OF THEIR DAUGHTER</span></p>';
     const schema = parseSpans(text);
@@ -425,30 +425,30 @@ describe('parseSpans', () => {
     );
   });
 
-  it('can handle multiple paragraphs with four paragraphs on input as plain string', () => {
+  it('can handle three paragraphs with four paragraphs on input as plain string with &', () => {
     const text =
       '<p><span style="color:cmyk(41,69,163,0,255);font-size:33pt;ot:calt,0;ot:liga,1;ot:locl,0;" >MR. AND MRS. JOHN PAUL FRAZIER</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >request the honor of your presence at</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >THE WEDDING OF THEIR DAUGHTER</span></p>';
     const schema = parseSpans(text);
     expect(schema.paragraphs.length).to.equal(3);
 
-    const input = 'hello world\ntis nice\nAll is well\njump on the trampoline';
+    const input = 'hello & world\ntis & nice\nAll & is well\njump & on the trampoline';
     const output = applySpans(schema, input);
     expect(output).to.equal(
-      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis nice</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">All is well</span></p><p><span style="ot:liga;ot:locl,0;">jump on the trampoline</span></p>',
+      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello &amp; world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis &amp; nice</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">All &amp; is well</span></p><p><span style="ot:liga;ot:locl,0;">jump &amp; on the trampoline</span></p>',
     );
   });
 
-  it('can handle multiple paragraphs with four paragraphs on input as html', () => {
+  it('can handle three paragraphs with four paragraphs on input as html with &', () => {
     const text =
       '<p><span style="color:cmyk(41,69,163,0,255);font-size:33pt;ot:calt,0;ot:liga,1;ot:locl,0;" >MR. AND MRS. JOHN PAUL FRAZIER</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >request the honor of your presence at</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;" >THE WEDDING OF THEIR DAUGHTER</span></p>';
     const schema = parseSpans(text);
     expect(schema.paragraphs.length).to.equal(3);
 
     const input =
-      '<p><span>hello world</span></p><p><span>tis nice</span></p><p><span>All is well</span></p><p><span>jump on the trampoline</span></p>';
+      '<p><span>hello & world</span></p><p><span>tis & nice</span></p><p><span>All & is well</span></p><p><span>jump & on the trampoline</span></p>';
     const output = applySpans(schema, input);
     expect(output).to.equal(
-      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis nice</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">All is well</span></p><p><span style="ot:liga;ot:locl,0;">jump on the trampoline</span></p>',
+      '<p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">hello &amp; world</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">tis &amp; nice</span></p><p><span style="ot:calt,0;ot:liga,1;ot:locl,0;">All &amp; is well</span></p><p><span style="ot:liga;ot:locl,0;">jump &amp; on the trampoline</span></p>',
     );
   });
 

@@ -305,9 +305,12 @@ function applySpans(paragraphsSchema, text) {
       }
     }
 
+    // Escape & and other characters
+    textParagraphs = textParagraphs.map(escape);
+
     let outText = paragraphsSchema.paragraphs.map((paragraph, index) => {
       const { spanSchema } = paragraph;
-      const pText = escape(textParagraphs[index] || '');
+      const pText = textParagraphs[index] || '';
       return applyParagraph(spanSchema, pText);
     });
 
