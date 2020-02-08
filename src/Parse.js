@@ -13,7 +13,13 @@ function SpanSchema(spans, ligas) {
 }
 
 SpanSchema.prototype.toString = function() {
-  const spanElements = this.spans.map(toSpanElement);
+  const spanElements = this.spans.map(span => {
+    const newSpan = {
+      ...span,
+      content: escape(span.content),
+    };
+    return toSpanElement(newSpan);
+  });
   return `<p>${spanElements.join('')}</p>`;
 };
 
@@ -286,63 +292,63 @@ function applySpans(paragraphsSchema, text) {
     // noop
   }
 
-  if (doc) {
-    let textParagraphs = [];
-    // See if we just have plain text
-    if (doc.childNodes.length === 1 && doc.childNodes[0].nodeType === 3) {
-      textParagraphs = text.split('\n');
-    } else {
-      const paragraphs = doc.getElementsByTagName('p');
-      for (let i = 0; i < paragraphs.length; i += 1) {
-        const paragraph = paragraphs[i];
-        const spans = paragraph.getElementsByTagName('span');
-        let paragraphText = '';
-        for (let j = 0; j < spans.length; j += 1) {
-          const span = spans[j];
-          paragraphText = `${paragraphText}${span.textContent}`;
-        }
-        textParagraphs.push(paragraphText);
-      }
-    }
-
-    // Escape & and other characters
-    textParagraphs = textParagraphs.map(escape);
-
-    let outText = paragraphsSchema.paragraphs.map((paragraph, index) => {
-      const { spanSchema } = paragraph;
-      const pText = textParagraphs[index] || '';
-      return applyParagraph(spanSchema, pText);
-    });
-
-    // See if we have more text paragraphs
-    if (paragraphsSchema.paragraphs.length < textParagraphs.length) {
-      const moreOutText = textParagraphs.slice(paragraphsSchema.paragraphs.length).map(textParagraph => {
-        return `<p><span style="ot:liga;ot:locl,0;">${textParagraph}</span></p>`;
-      });
-      outText.push(...moreOutText);
-    }
-
-    if (outText.length > 1) {
-      let found = false;
-      outText = outText
-        .reverse()
-        .filter(t => {
-          if (found) {
-            return true;
-          }
-
-          const remove = t === '<p></p>';
-          found = !remove;
-
-          return !remove;
-        })
-        .reverse();
-    }
-
-    return outText.join('');
+  if (!doc) {
+    return '<p></p>';
   }
 
-  return '<p></p>';
+  let textParagraphs = [];
+  // See if we just have plain text
+  if (doc.childNodes.length === 1 && doc.childNodes[0].nodeType === 3) {
+    textParagraphs = text.split('\n');
+  } else {
+    const paragraphs = doc.getElementsByTagName('p');
+    for (let i = 0; i < paragraphs.length; i += 1) {
+      const paragraph = paragraphs[i];
+      const spans = paragraph.getElementsByTagName('span');
+      let paragraphText = '';
+      for (let j = 0; j < spans.length; j += 1) {
+        const span = spans[j];
+        paragraphText = `${paragraphText}${span.textContent}`;
+      }
+      textParagraphs.push(paragraphText);
+    }
+  }
+
+  // Escape & and other characters
+  textParagraphs = textParagraphs.map(escape);
+
+  let outText = paragraphsSchema.paragraphs.map((paragraph, index) => {
+    const { spanSchema } = paragraph;
+    const pText = textParagraphs[index] || '';
+    return applyParagraph(spanSchema, pText);
+  });
+
+  // See if we have more text paragraphs
+  if (paragraphsSchema.paragraphs.length < textParagraphs.length) {
+    const moreOutText = textParagraphs.slice(paragraphsSchema.paragraphs.length).map(textParagraph => {
+      return `<p><span style="ot:liga;ot:locl,0;">${textParagraph}</span></p>`;
+    });
+    outText.push(...moreOutText);
+  }
+
+  if (outText.length > 1) {
+    let found = false;
+    outText = outText
+      .reverse()
+      .filter(t => {
+        if (found) {
+          return true;
+        }
+
+        const remove = t === '<p></p>';
+        found = !remove;
+
+        return !remove;
+      })
+      .reverse();
+  }
+
+  return outText.join('');
 }
 
 function fillTwoSpans(spans, invert, text) {

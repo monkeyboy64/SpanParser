@@ -322,7 +322,7 @@ describe('parseSpans', () => {
   });
 
   it('schema with empty spans', () => {
-    const text = 'this is text';
+    const text = 'this is text &';
     const schema = parseSpans(text);
     expect(schema.paragraphs.length).to.equal(0);
     expect(schema.toString()).to.equal(text);
@@ -678,5 +678,63 @@ describe('parseSpans', () => {
 
     const output = applySpans(schema, 'Taylor Frazier');
     expect(output).to.equal(expectedOutput.join(''));
+  });
+
+  it('parseSpans then toString with &', () => {
+    const ps = [
+      '<p><span style="ot:locl,0;">MARRIAGE OFFICIANT: REVEREND JOHN DILLAN</span></p>',
+      '<p><span style="ot:locl,0;">PRELUDE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE GROOM &amp; GROOMSMEN</span></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE PARENTS</span></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE MAID OF HONOR</span></p>',
+      '<p><span style="ot:locl,0;">RING BEARER &amp; FLOWER GIRL</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">&amp; FATHER OF THE BRIDE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">CEREMONY</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">READING BY THE SISTER OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">READING BY THE GROOM’S UNCLE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">GIVING OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">EXCHANGING OF VOWS</span></p>',
+      '<p><span style="ot:locl,0;">EXCHANGING OF RINGS</span></p>',
+      '<p><span style="ot:locl,0;">PRONOUNCEMENT</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">MUSIC AND PROCESSION</span></p>',
+      '<p><span style="ot:locl,0;">SIGNING OF THE REGISTRY</span></p>',
+    ];
+
+    const expected = [
+      '<p><span style="ot:locl,0;">MARRIAGE OFFICIANT: REVEREND JOHN DILLAN</span></p>',
+      '<p><span style="ot:locl,0;">PRELUDE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE GROOM &amp; GROOMSMEN</span></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE PARENTS</span></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE MAID OF HONOR</span></p>',
+      '<p><span style="ot:locl,0;">RING BEARER &amp; FLOWER GIRL</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">&amp; FATHER OF THE BRIDE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">CEREMONY</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">READING BY THE SISTER OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">READING BY THE GROOM’S UNCLE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">GIVING OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">EXCHANGING OF VOWS</span></p>',
+      '<p><span style="ot:locl,0;">EXCHANGING OF RINGS</span></p>',
+      '<p><span style="ot:locl,0;">PRONOUNCEMENT</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">MUSIC AND PROCESSION</span></p>',
+      '<p><span style="ot:locl,0;">SIGNING OF THE REGISTRY</span></p>',
+    ];
+
+    const schema = parseSpans(ps.join(''));
+    const output = schema.toString();
+    expect(output).to.equal(expected.join(''));
   });
 });
