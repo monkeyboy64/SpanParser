@@ -510,7 +510,7 @@ describe('parseSpans', () => {
     expect(output).to.equal(expectedOutput.join(''));
   });
 
-  it('expect output to be the same as input', () => {
+  it('expect output to be the same as input, but escaped', () => {
     const ps = [
       '<p><span style="ot:locl,0;">MARRIAGE OFFICIANT: REVEREND JOHN DILLAN</span></p>',
       '<p><span style="ot:locl,0;">PRELUDE</span></p>',
@@ -541,13 +541,13 @@ describe('parseSpans', () => {
       'MARRIAGE OFFICIANT: REVEREND JOHN DILLAN',
       'PRELUDE',
       '',
-      'ENTRANCE OF THE GROOM & GROOMSMEN',
+      'ENTRANCE OF THE GROOM &amp; GROOMSMEN',
       'ENTRANCE OF THE PARENTS',
       'ENTRANCE OF THE MAID OF HONOR',
-      'RING BEARER & FLOWER GIRL',
+      'RING BEARER &amp; FLOWER GIRL',
       '',
       'ENTRANCE OF THE BRIDE',
-      '& FATHER OF THE BRIDE',
+      '&amp; FATHER OF THE BRIDE',
       '',
       'CEREMONY',
       '',

@@ -63,10 +63,10 @@ ParagraphsSchema.prototype.toString = function() {
 
 ParagraphsSchema.prototype.toPlainText = function() {
   if (!this.paragraphs.length) {
-    return this.originalText;
+    return escape(this.originalText);
   }
 
-  return this.paragraphs.map(p => p.toPlainText()).join('\n');
+  return escape(this.paragraphs.map(p => p.toPlainText()).join('\n'));
 };
 
 function parseSpans(originalText) {
