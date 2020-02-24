@@ -63,6 +63,14 @@ ParagraphsSchema.prototype.toString = function() {
 
 ParagraphsSchema.prototype.toPlainText = function() {
   if (!this.paragraphs.length) {
+    return this.originalText;
+  }
+
+  return this.paragraphs.map(p => p.toPlainText()).join('\n');
+};
+
+ParagraphsSchema.prototype.toEscapedPlainText = function() {
+  if (!this.paragraphs.length) {
     return escape(this.originalText);
   }
 

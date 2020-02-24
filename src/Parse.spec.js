@@ -510,6 +510,64 @@ describe('parseSpans', () => {
     expect(output).to.equal(expectedOutput.join(''));
   });
 
+  it('expect output to be the same as input', () => {
+    const ps = [
+      '<p><span style="ot:locl,0;">MARRIAGE OFFICIANT: REVEREND JOHN DILLAN</span></p>',
+      '<p><span style="ot:locl,0;">PRELUDE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE GROOM &amp; GROOMSMEN</span></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE PARENTS</span></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE MAID OF HONOR</span></p>',
+      '<p><span style="ot:locl,0;">RING BEARER &amp; FLOWER GIRL</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">ENTRANCE OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">&amp; FATHER OF THE BRIDE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">CEREMONY</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">READING BY THE SISTER OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">READING BY THE GROOM’S UNCLE</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">GIVING OF THE BRIDE</span></p>',
+      '<p><span style="ot:locl,0;">EXCHANGING OF VOWS</span></p>',
+      '<p><span style="ot:locl,0;">EXCHANGING OF RINGS</span></p>',
+      '<p><span style="ot:locl,0;">PRONOUNCEMENT</span></p>',
+      '<p></p>',
+      '<p><span style="ot:locl,0;">MUSIC AND PROCESSION</span></p>',
+      '<p><span style="ot:locl,0;">SIGNING OF THE REGISTRY</span></p>',
+    ];
+
+    const expectedOutput = [
+      'MARRIAGE OFFICIANT: REVEREND JOHN DILLAN',
+      'PRELUDE',
+      '',
+      'ENTRANCE OF THE GROOM & GROOMSMEN',
+      'ENTRANCE OF THE PARENTS',
+      'ENTRANCE OF THE MAID OF HONOR',
+      'RING BEARER & FLOWER GIRL',
+      '',
+      'ENTRANCE OF THE BRIDE',
+      '& FATHER OF THE BRIDE',
+      '',
+      'CEREMONY',
+      '',
+      'READING BY THE SISTER OF THE BRIDE',
+      'READING BY THE GROOM’S UNCLE',
+      '',
+      'GIVING OF THE BRIDE',
+      'EXCHANGING OF VOWS',
+      'EXCHANGING OF RINGS',
+      'PRONOUNCEMENT',
+      '',
+      'MUSIC AND PROCESSION',
+      'SIGNING OF THE REGISTRY',
+    ];
+
+    const schema = parseSpans(ps.join(''));
+    const output = schema.toPlainText();
+    expect(output).to.equal(expectedOutput.join('\n'));
+  });
+
   it('expect output to be the same as input, but escaped', () => {
     const ps = [
       '<p><span style="ot:locl,0;">MARRIAGE OFFICIANT: REVEREND JOHN DILLAN</span></p>',
@@ -564,7 +622,7 @@ describe('parseSpans', () => {
     ];
 
     const schema = parseSpans(ps.join(''));
-    const output = schema.toPlainText();
+    const output = schema.toEscapedPlainText();
     expect(output).to.equal(expectedOutput.join('\n'));
   });
 
